@@ -26,14 +26,22 @@ func NewLCD(i *i2c.I2C) (*LCD, error) {
 
 // Reset sends a reset command.
 func (lcd *LCD) Reset() error {
-	if _, err := lcd.i.Write([]byte{0x38, 0x39, 0x14, contrast & 15, 0x78, 0x5f, 0x6a}); err != nil {
-		return err
+	cmds := []byte{
+		0x38,
+		0x39,
+		0x14,
+		contrast & 15,
+		0x5F,
+		0x6A,
+		0x38,
+		0x0C,
+		0x01,
 	}
-	time.Sleep(300 * time.Millisecond)
-	if _, err := lcd.i.Write([]byte{0x38, 0x0c, 0x01}); err != nil {
-		return err
+	for _, cmd := range cmds {
+		if err := lcd.Cmd(cmd); err != nil {
+			return err
+		}
 	}
-	time.Sleep(300 * time.Millisecond)
 	return nil
 }
 
