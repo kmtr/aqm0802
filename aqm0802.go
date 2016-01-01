@@ -6,6 +6,7 @@ import "github.com/davecheney/i2c"
 import "time"
 
 const contrast = 0x20
+const defaultWait = 26300 * time.Nanosecond
 
 // LCD is struct of AQM0802 LCD
 type LCD struct {
@@ -50,5 +51,6 @@ func (lcd *LCD) ChangeRow(n int) {
 
 func (lcd *LCD) Write(buf []byte) (int, error) {
 	i, err := lcd.i.Write(append([]byte{0x40}, buf...))
+	time.Sleep(defaultWait)
 	return i - 1, err
 }
