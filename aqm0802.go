@@ -43,9 +43,9 @@ func (lcd *LCD) Reset() error {
 func (lcd *LCD) ChangeRow(n int) {
 	switch n {
 	case 0:
-		lcd.i.Write([]byte{0, 0x80})
+		lcd.Cmd(0x80)
 	case 1:
-		lcd.i.Write([]byte{0, 0xc0})
+		lcd.Cmd(0xC0)
 	}
 }
 
@@ -54,3 +54,11 @@ func (lcd *LCD) Write(buf []byte) (int, error) {
 	time.Sleep(defaultWait)
 	return i - 1, err
 }
+
+// Cmd sends a control command.
+func (lcd *LCD) Cmd(cmd byte) error {
+	_, err := lcd.i.Write(append([]byte{0x0}, cmd))
+	time.Sleep(defaultWait)
+	return err
+}
+
