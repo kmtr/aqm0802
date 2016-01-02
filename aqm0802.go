@@ -84,3 +84,25 @@ func (lcd *LCD) Home() error {
 	return err
 }
 
+// SetupDisplay setup display.
+// 1st arg: Display ON/OFF.
+// Even when the display is turned off, the data is remained in RAM.
+// 2nd arg: Cursor ON/OFF.
+// Even when the cursor is disappeared, the index register remains its data.
+// 3rd arg" Cursor Blink ON/OFF
+func (lcd *LCD) SetupDisplay(on bool, cur bool, blink bool) error {
+	cmd := 0x01
+	cmd = cmd << 1
+	if on {
+		cmd++
+	}
+	cmd = cmd << 1
+	if cur {
+		cmd++
+	}
+	cmd = cmd << 1
+	if blink {
+		cmd++
+	}
+	return lcd.Cmd(byte(cmd))
+}
