@@ -77,3 +77,10 @@ func (lcd *LCD) Clear() error {
 	return err
 }
 
+// Home sets cursor to home
+func (lcd *LCD) Home() error {
+	err := lcd.Cmd(byte(0x02))
+	time.Sleep((1080 - defaultWait) * time.Microsecond)
+	return err
+}
+
