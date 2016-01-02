@@ -70,3 +70,10 @@ func (lcd *LCD) Cmd(cmd byte) error {
 	return err
 }
 
+// Clear clears LCD
+func (lcd *LCD) Clear() error {
+	err := lcd.Cmd(0x01)
+	time.Sleep((1080 - defaultWait) * time.Microsecond)
+	return err
+}
+
