@@ -8,6 +8,15 @@ import "time"
 const contrast = 0x32
 const defaultWait = 26300 * time.Nanosecond
 
+const (
+	// FunctionSetIS0 represents command that is Function Set IS=0
+	FunctionSetIS0 = 0x38
+	// FunctionSetIS1 represents command that is Function Set IS=1
+	// You must send this before to use extra commands
+	// and send FunctionSetIS0 after using extra commands
+	FunctionSetIS1 = 0x39
+)
+
 // LCD is struct of AQM0802 LCD
 type LCD struct {
 	i *i2c.I2C
@@ -29,13 +38,13 @@ func (lcd *LCD) Reset() error {
 	contrastU := byte(contrast & 15)
 	contrastL := byte(contrast >> 4 & 3)
 	cmds := []byte{
-		0x38,
-		0x39,
+		FunctionSetIS0,
+		FunctionSetIS1,
 		0x14,
 		contrastU,
 		0x5C | contrastL,
 		0x6A,
-		0x38,
+		FunctionSetIS0,
 		0x0C,
 		0x01,
 	}
