@@ -5,7 +5,7 @@ import "github.com/davecheney/i2c"
 
 import "time"
 
-const contrast = 0x20
+const contrast = 0x32
 const defaultWait = 26300 * time.Nanosecond
 
 // LCD is struct of AQM0802 LCD
@@ -26,12 +26,14 @@ func NewLCD(i *i2c.I2C) (*LCD, error) {
 
 // Reset sends a reset command.
 func (lcd *LCD) Reset() error {
+	contrastU := byte(contrast & 15)
+	contrastL := byte(contrast >> 4 & 3)
 	cmds := []byte{
 		0x38,
 		0x39,
 		0x14,
-		contrast & 15,
-		0x5F,
+		contrastU,
+		0x5C | contrastL,
 		0x6A,
 		0x38,
 		0x0C,
