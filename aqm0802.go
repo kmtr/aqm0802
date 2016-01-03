@@ -5,7 +5,7 @@ import "github.com/davecheney/i2c"
 
 import "time"
 
-const contrast = 0x32
+const defaultContrast = 0x32
 const defaultWait = 26300 * time.Nanosecond
 
 const (
@@ -35,14 +35,13 @@ func NewLCD(i *i2c.I2C) (*LCD, error) {
 
 // Reset sends a reset command.
 func (lcd *LCD) Reset() error {
-	contrastU := byte(contrast & 15)
-	contrastL := byte(contrast >> 4 & 3)
+	cu, cl := parseContrastValue(defaultContrast)
 	cmds := []byte{
 		FunctionSetIS0,
 		FunctionSetIS1,
 		0x14,
-		contrastU,
-		0x5C | contrastL,
+		cu,
+		0x5C | cl,
 		0x6A,
 		FunctionSetIS0,
 		0x0C,
@@ -116,4 +115,29 @@ func (lcd *LCD) SetupDisplay(on bool, cur bool, blink bool) error {
 		cmd++
 	}
 	return lcd.Cmd(byte(cmd))
+}
+
+// SetContrast sets contrast
+func (lcd *LCD) SetContrast(c int) error {
+	cu, cl := parseContrastValue(c)
+	if err := lcd.Cmd(FunctionSetIS1); err != nil {
+		return err
+	}
+	defer lcd.Cmd(FunctionSetIS0)
+	cmds := []byte{
+		cu,
+		0x5C | cl,
+	}
+	for _, cmd := range cmds {
+		if err := lcd.Cmd(cmd); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func parseContrastValue(c int) (byte, byte) {
+	u := byte(c & 15)
+	l := byte(c >> 4 & 3)
+	return byte(u), byte(l)
 }
