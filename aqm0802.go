@@ -1,9 +1,11 @@
 // Package aqm0802 provides AQM0802 LCD control API
 package aqm0802
 
-import "github.com/davecheney/i2c"
+import (
+	"time"
 
-import "time"
+	"github.com/davecheney/i2c"
+)
 
 const defaultContrast = 0x32
 const defaultWait = 26300 * time.Nanosecond
