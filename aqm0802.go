@@ -143,3 +143,37 @@ func parseContrastValue(c int) (byte, byte) {
 	l := byte(c >> 4 & 3)
 	return byte(u), byte(l)
 }
+
+// RegisterCG registers graphinc data with the CGRAM
+// GraphicData consist of 5bit(0x1F == 31) x 8 lines bit array.
+// First line is data[0].
+// Last line(data[7]) is cursor line.
+//
+// Character Pattern
+// -------------------
+// 0 0 0 0 0 | data[0]
+// 0 0 0 0 0 | data[1]
+// ...
+// 0 0 0 0 0 | data[7]
+//
+func (lcd *LCD) RegisterCG(p int, data [8]byte) error {
+	addr := byte(0x40 + p*8)
+	// Set CGRAM
+	err := lcd.Cmd(addr)
+	if err != nil {
+		return err
+	}
+	for _, line := range data {
+		// Write Data
+		_, err = lcd.i.Write(append([]byte{addr}, line))
+		if err != nil {
+			return err
+		}
+	}
+	// Set DDRAM
+	err = lcd.Cmd(byte(0x80))
+	if err != nil {
+		return err
+	}
+	return nil
+}
