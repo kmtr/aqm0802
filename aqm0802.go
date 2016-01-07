@@ -177,3 +177,23 @@ func (lcd *LCD) RegisterCG(p int, data [8]byte) error {
 	}
 	return nil
 }
+
+// ShiftCursorLeft shifts cursor to the left
+func (lcd *LCD) ShiftCursorLeft() error {
+	return lcd.Cmd(byte(0x10))
+}
+
+// ShiftCursorRight shifts cursor to the right
+func (lcd *LCD) ShiftCursorRight() error {
+	return lcd.Cmd(byte(0x14))
+}
+
+// ShiftDisplayLeft shifts cursor to the left
+func (lcd *LCD) ShiftDisplayLeft() error {
+	return lcd.Cmd(byte(0x18))
+}
+
+// ShiftDisplayRight shifts cursor to the right
+func (lcd *LCD) ShiftDisplayRight() error {
+	return lcd.Cmd(byte(0x1C))
+}
