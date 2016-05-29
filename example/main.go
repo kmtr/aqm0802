@@ -4,12 +4,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/davecheney/i2c"
 	"github.com/kmtr/aqm0802"
 )
 
 func main() {
-	i, err := i2c.New(0x3e, 1)
+	i, err := newI2C()
 	if err != nil {
 		log.Fatal(err)
 	}

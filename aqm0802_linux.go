@@ -1,4 +1,5 @@
-// Package aqm0802 provides AQM0802 LCD control API
+// +build linux
+
 package aqm0802
 
 import (
