@@ -102,7 +102,7 @@ func (lcd *LCD) Home() error {
 // Even when the display is turned off, the data is remained in RAM.
 // 2nd arg: Cursor ON/OFF.
 // Even when the cursor is disappeared, the index register remains its data.
-// 3rd arg" Cursor Blink ON/OFF
+// 3rd arg: Cursor Blink ON/OFF
 func (lcd *LCD) SetupDisplay(on bool, cur bool, blink bool) error {
 	cmd := 0x01
 	cmd = cmd << 1
@@ -122,11 +122,11 @@ func (lcd *LCD) SetupDisplay(on bool, cur bool, blink bool) error {
 
 // SetContrast sets contrast
 func (lcd *LCD) SetContrast(c int) error {
-	cu, cl := parseContrastValue(c)
 	if err := lcd.Cmd(FunctionSetIS1); err != nil {
 		return err
 	}
 	defer lcd.Cmd(FunctionSetIS0)
+	cu, cl := parseContrastValue(c)
 	cmds := []byte{
 		cu,
 		0x5C | cl,
@@ -160,23 +160,17 @@ func parseContrastValue(c int) (byte, byte) {
 func (lcd *LCD) RegisterCG(p int, data [8]byte) error {
 	addr := byte(0x40 + p*8)
 	// Set CGRAM
-	err := lcd.Cmd(addr)
-	if err != nil {
+	if err := lcd.Cmd(addr); err != nil {
 		return err
 	}
 	for _, line := range data {
 		// Write Data
-		_, err = lcd.i.Write(append([]byte{addr}, line))
-		if err != nil {
+		if _, err := lcd.i.Write(append([]byte{addr}, line)); err != nil {
 			return err
 		}
 	}
 	// Set DDRAM
-	err = lcd.Cmd(byte(0x80))
-	if err != nil {
-		return err
-	}
-	return nil
+	return lcd.Cmd(byte(0x80))
 }
 
 // ShiftCursorLeft shifts cursor to the left
